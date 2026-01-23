@@ -11,4 +11,5 @@ CC-By Attribution 4.0 International
 
 ### Dependencies
 - 'catWM_toolbox' contains decoding, statistics and plotting functions required for running the analysis scripts
-- Matlab 'Statistics and Machine Learning toolbox'
+- Matlab 'Image Processing Toolbox', 'Statistics and Machine Learning toolbox' & 'Parallel Computing toolbox'
+- 
