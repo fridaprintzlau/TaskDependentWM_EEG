@@ -17,7 +17,7 @@ clc
 %Datapath
 fs = filesep;
 studypath = ''; %define path where the data folder sits
-datapath = [studypath strcat(fs,'Data_for_sharing/EEG/Preprocessed')];
+datapath = [studypath strcat(fs,'Data/EEG/Preprocessed')];  % input data
 addpath(genpath('catWM_toolbox')) %required functions
 
 %Load trialwise data

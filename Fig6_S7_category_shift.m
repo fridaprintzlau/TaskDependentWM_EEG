@@ -111,13 +111,7 @@ end
 %% Prepare for plotting
 colorpath = 'catWM_toolbox/cbrewer';
 addpath(genpath(colorpath));
-cmap1 = cbrewer('div', 'PuOr', 36); %
-cmap2 = cbrewer('seq', 'Greens', 12);
-cmap3 = cbrewer('qual', 'Set1', 12);
-cmap4 = cbrewer('qual', 'Accent', 12);
-cmap5 = cbrewer('div', 'PRGn', 12);
-cmap6 = cbrewer('qual', 'Set2', 8);
-cmap7 = cbrewer('qual', 'Paired', 12);
+cmap1 = cbrewer('qual', 'Accent', 12);
 
 %% Category-dependent shift (Figure 6BC)
 
@@ -192,7 +186,7 @@ timeseries = time_orig;
 
 %Plot time-resolved decoding quality and cluster-corrected stats
 figure('Color', 'white', 'Position', [100 100 600 400])
-statcols = [cmap4(1:2,:);[0,0,0]];
+statcols = [cmap1(1:2,:);[0,0,0]];
 ylims = [-0.015 0.025];
 hold on
 
@@ -215,8 +209,8 @@ end
 
 hold on
 cfg = [];
-hplot = plotpatch(smooth_diff_m2s,time_orig,cmap4(1,:),cfg); hold on
-gplot = plotpatch(smooth_diff_m2c,time_orig,cmap4(2,:),cfg);
+hplot = plotpatch(smooth_diff_m2s,time_orig,cmap1(1,:),cfg); hold on
+gplot = plotpatch(smooth_diff_m2c,time_orig,cmap1(2,:),cfg);
 plot(time_orig, zeros(size(time_orig)), 'k--')
 ylim(ylims);
 line([0, 0], [ylims(1), ylims(2)], 'color', 'k')
@@ -246,11 +240,11 @@ CI95 = tinv([0.025 0.975], N-1);
 yCI95_early = bsxfun(@times, ySEM_early, CI95(:));
 
 figure('Color', 'white', 'Position', [100 100 300 300])
-ax1=scatter(1.1*ones(1,length(early_dat(:,1))), early_dat(:,1), 30, cmap4(1,:), 'filled'); hold on
-ax2=scatter(1.9*ones(1,length(early_dat(:,2))), early_dat(:,2), 30, cmap4(2,:), 'filled');
+ax1=scatter(1.1*ones(1,length(early_dat(:,1))), early_dat(:,1), 30, cmap1(1,:), 'filled'); hold on
+ax2=scatter(1.9*ones(1,length(early_dat(:,2))), early_dat(:,2), 30, cmap1(2,:), 'filled');
 ax1.MarkerFaceAlpha=0.5; ax2.MarkerFaceAlpha=0.5;
-errorbar(1, yMean_early(1,1), yCI95_early(2,1), '.', 'color', cmap4(1,:), 'linewidth', 2, 'MarkerSize', 30)
-errorbar(2, yMean_early(1,2), yCI95_early(2,2), '.', 'color', cmap4(2,:), 'linewidth', 2, 'MarkerSize', 30)
+errorbar(1, yMean_early(1,1), yCI95_early(2,1), '.', 'color', cmap1(1,:), 'linewidth', 2, 'MarkerSize', 30)
+errorbar(2, yMean_early(1,2), yCI95_early(2,2), '.', 'color', cmap1(2,:), 'linewidth', 2, 'MarkerSize', 30)
 plot([1.2,1.8], [early_dat(:,1), early_dat(:,2)], 'color', [0.7,0.7,0.7])
 plot([0.5:2.5], zeros(size([0.5:2.5])), 'k--')
 xlim([0.5, 2.5])
@@ -275,11 +269,11 @@ CI95 = tinv([0.025 0.975], N-1);
 yCI95_late = bsxfun(@times, ySEM_late, CI95(:));
 
 figure('Color', 'white', 'Position', [100 100 300 300])
-ax1=scatter(1.1*ones(1,length(late_dat(:,1))), late_dat(:,1), 30, cmap4(1,:), 'filled'); hold on
-ax2=scatter(1.9*ones(1,length(late_dat(:,2))), late_dat(:,2), 30, cmap4(2,:), 'filled');
+ax1=scatter(1.1*ones(1,length(late_dat(:,1))), late_dat(:,1), 30, cmap1(1,:), 'filled'); hold on
+ax2=scatter(1.9*ones(1,length(late_dat(:,2))), late_dat(:,2), 30, cmap1(2,:), 'filled');
 ax1.MarkerFaceAlpha=0.5; ax2.MarkerFaceAlpha=0.5;
-errorbar(1, yMean_late(1,1), yCI95_late(2,1), '.', 'color', cmap4(1,:), 'linewidth', 2, 'MarkerSize', 30)
-errorbar(2, yMean_late(1,2), yCI95_late(2,2), '.', 'color', cmap4(2,:), 'linewidth', 2, 'MarkerSize', 30)
+errorbar(1, yMean_late(1,1), yCI95_late(2,1), '.', 'color', cmap1(1,:), 'linewidth', 2, 'MarkerSize', 30)
+errorbar(2, yMean_late(1,2), yCI95_late(2,2), '.', 'color', cmap1(2,:), 'linewidth', 2, 'MarkerSize', 30)
 plot([1.2,1.8], [late_dat(:,1), late_dat(:,2)], 'color', [0.7,0.7,0.7])
 plot([0.5:2.5], zeros(size([0.5:2.5])), 'k--')
 plot([0.5:2.5], 0.0089*ones(size([0.5:2.5])), 'b--')
@@ -304,3 +298,80 @@ es = meanEffectSize(m2s_toi,m2c_toi, 'Paired', true, Effect="cohen")
 
 % fname = sprintf('%s%sAnalysis_output/category_shift_m2c_lateTOI', datapath,fs);
 % save(fname, 'm2c_toi') %Save for median split analysis
+
+%% Figure S7 representational shift as a function of absolute distance to category boundary
+
+near = [1,2,3,16,17,18,19,20,21,34,35,36];
+mid = [4,5,6,13,14,15,22,23,24,31,32,33];
+far = [7,8,9,10,11,12,25,26,27,28,29,30];
+near_diff_score_m2s = squeeze(mean(diff_score_m2s(near,:,:),1));
+near_diff_score_m2c = squeeze(mean(diff_score_m2c(near,:,:),1));
+mid_diff_score_m2s = squeeze(mean(diff_score_m2s(mid,:,:),1));
+mid_diff_score_m2c = squeeze(mean(diff_score_m2c(mid,:,:),1));
+far_diff_score_m2s = squeeze(mean(diff_score_m2s(far,:,:),1));
+far_diff_score_m2c = squeeze(mean(diff_score_m2c(far,:,:),1));
+
+%Plot match-to-category only for each distance
+% Smooth data for each subject
+smooth_near = filtfast(near_diff_score_m2c,2,[],ftype,fsize);
+smooth_middle = filtfast(mid_diff_score_m2c,2,[],ftype,fsize);
+smooth_far = filtfast(far_diff_score_m2c,2,[],ftype,fsize);
+
+figure('Color', 'white', 'Position', [100 100 600 400])
+cfg = [];
+jplot = plotpatch(smooth_far,time_orig,cmap8(12,:),cfg); hold on
+gplot = plotpatch(smooth_middle,time_orig,cmap8(9,:),cfg);
+hplot = plotpatch(smooth_near,time_orig,cmap8(4,:),cfg);
+plot(time_orig, zeros(size(time_orig)), 'k--')
+ylims = [-0.015 0.035];
+ylim(ylims);
+line([0, 0], [ylims(1), ylims(2)], 'color', 'k')
+line([0.15, 0.15], [ylims(1), ylims(2)], 'color', 'k')
+line([1.7, 1.7], [ylims(1), ylims(2)], 'color', 'k')
+xlim([-0.2 2.2])
+legend([hplot,gplot,jplot], {'Near', 'Middle', 'Far'})
+ylabel('Neural distances between-within category DMC task','FontSize',12)
+xlabel('Time from stimulus onset (s)','FontSize',12)
+
+late_toi = time_orig>0.7 & time_orig <=1.7;
+m2c_near = mean(near_diff_score_m2c(:,late_toi),2);
+m2c_mid = mean(mid_diff_score_m2c(:,late_toi),2);
+m2c_far = mean(far_diff_score_m2c(:,late_toi),2);
+
+late_dat = [m2c_near,m2c_mid,m2c_far];
+
+N = nsubs;
+yMean_late = squeeze(mean(late_dat,1));
+ySEM_late = squeeze(std(late_dat)./sqrt(N));
+CI95 = tinv([0.025 0.975], N-1);
+yCI95_late = bsxfun(@times, ySEM_late, CI95(:));
+
+figure('Color', 'white', 'Position', [100 100 300 300])
+ax1=scatter(1.1*ones(1,length(late_dat(:,1))), late_dat(:,1), 30, cmap8(4,:), 'filled'); hold on
+ax2=scatter(2.1*ones(1,length(late_dat(:,2))), late_dat(:,2), 30, cmap8(9,:), 'filled');
+ax3=scatter(3.1*ones(1,length(late_dat(:,3))), late_dat(:,3), 30, cmap8(12,:), 'filled');
+ax1.MarkerFaceAlpha=0.3; ax2.MarkerFaceAlpha=0.3; ax3.MarkerFaceAlpha=0.3;
+errorbar(1, yMean_late(1,1), yCI95_late(2,1), '.', 'color', cmap8(4,:), 'linewidth', 2, 'MarkerSize', 30)
+errorbar(2, yMean_late(1,2), yCI95_late(2,2), '.', 'color', cmap8(9,:), 'linewidth', 2, 'MarkerSize', 30)
+errorbar(3, yMean_late(1,3), yCI95_late(2,3), '.', 'color', cmap8(12,:), 'linewidth', 2, 'MarkerSize', 30)
+% plot([1.2,1.8], [late_dat(:,1), late_dat(:,2)], 'color', [0.7,0.7,0.7])
+plot([0.5:3.5], zeros(size([0.5:3.5])), 'k--')
+xlim([0.5, 3.5])
+% ylim([-0.15 0.15])
+xticks([1,2,3])
+xticklabels({'near', 'middle', 'far'})
+title('category shift (late 0.7-1.7 s)','FontSize',12)
+
+[h, p, ci, stat] = ttest(m2c_near, 0, 'tail', 'right')
+[h, p, ci, stat] = ttest(m2c_mid, 0, 'tail', 'right')
+[h, p, ci, stat] = ttest(m2c_far, 0, 'tail', 'right')
+
+%one-way anova
+subjects = (1:size(late_dat, 1))';
+tbl_shift = array2table(late_dat, 'VariableNames', {'near', 'mid', 'far'});
+tbl_shift.Subject = subjects;
+% Fit a repeated measures model
+rm = fitrm(tbl_shift, 'near-far ~ 1', 'WithinDesign', [1 2 3]);
+
+% Perform repeated measures ANOVA
+ranovatbl = ranova(rm);

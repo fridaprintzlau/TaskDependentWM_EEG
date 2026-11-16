@@ -120,7 +120,7 @@ if run_analysis
             'Pz', 'POz', 'PO3', 'PO7', 'O1', 'O2', 'PO4', 'PO8', 'P4', 'P8', 'T8', 'C4', 'Cz', 'FC2', 'FC6', 'F4', 'AF4', 'AFz'}));
 
         %% Decoder
-        params.nreps = 1; %100; use 1 to debug; how many times to run the decoder to average over results? Use 100
+        params.nreps = 100; %100; use 1 to debug; how many times to run the decoder to average over results? Use 100
         params.nfold = 8;
         params.chans = eeg_chans; %posterior chans
 
@@ -207,7 +207,7 @@ topodat.dimord = 'time_chan';
 %Match-to-sample
 topodat.trial = submean_m2s;
 
-%Stimulus
+%Encoding
 for ichan = 1:length(label)
     toi = time_orig>=0 & time_orig<=0.2;
     time_mean = squeeze(mean(Cproj_within(:,toi,ichan,1),2));
@@ -271,7 +271,7 @@ saveas(gcf, savname)
 %Match-to-category
 topodat.trial = submean_m2c;
 
-%Stimulus
+%Encoding
 for ichan = 1:length(label)
     toi = time_orig>=0 & time_orig<=0.2;
     time_mean = squeeze(mean(Cproj_within(:,toi,ichan,2),2));
@@ -331,77 +331,6 @@ saveas(gcf, savname)
 savname = strcat(figpath, 'm2c_searchlight_late.svg');
 saveas(gcf, savname)
 
-%% Task difference topography
-diff = squeeze(bsxfun(@minus,Cproj_within(:,:,:,2), Cproj_within(:,:,:,1)));
-submean_diff = squeeze(mean(diff));
-
-topodat = clean_data;
-topodat.time = time_orig;
-topodat.trial = submean_diff;
-topodat.label = label;
-topodat.dimord = 'time_chan';
-
-%Stimulus
-for ichan = 1:length(label)
-    toi = time_orig>=0 & time_orig<=0.2;
-    time_mean = squeeze(mean(diff(:,toi,ichan),2));
-    [h, p(ichan)] = ttest(time_mean,0);
-end
-cfg = [];
-cfg.xlim = [0 0.2];
-% cfg.zlim = [0 0.0055];
-cfg.layout = 'fukuda_layout.mat';
-cfg.colorbar = 'southoutside';
-cfg.highlightchannel = label(p<=0.05);
-figure()
-ft_topoplotER(cfg, topodat); colormap viridis; 
-title('Task difference Stimulus (0-0.2s)')
-savname = strcat(figpath, 'diff_searchlight_stim.png');
-saveas(gcf, savname)
-savname = strcat(figpath, 'diff_searchlight_stim.svg');
-saveas(gcf, savname)
-
-
-%Early delay
-cfg = [];
-cfg.xlim = [0.2 0.7];
-% cfg.zlim = [0 0.0055];
-cfg.layout = 'fukuda_layout.mat';
-cfg.colorbar = 'southoutside';
-for ichan = 1:length(label)
-    toi = time_orig>=0.2 & time_orig<=0.7;
-    time_mean = squeeze(mean(diff(:,toi,ichan),2));
-    [h, p(ichan)] = ttest(time_mean,0);
-end
-cfg.highlightchannel = label(p<=0.05);
-figure()
-ft_topoplotER(cfg, topodat); colormap viridis; 
-title('Task difference Early delay (0.2-0.7s)')
-savname = strcat(figpath, 'diff_searchlight_early.png');
-saveas(gcf, savname)
-savname = strcat(figpath, 'diff_searchlight_early.svg');
-saveas(gcf, savname)
-
-%Late delay
-cfg = [];
-cfg.xlim = [0.7 1.7];
-% cfg.zlim = [0 0.0012];
-cfg.layout = 'fukuda_layout.mat';
-cfg.colorbar = 'southoutside';
-for ichan = 1:length(label)
-    toi = time_orig>=0.7 & time_orig<=1.7;
-    time_mean = squeeze(mean(diff(:,toi,ichan),2));
-    [h, p(ichan)] = ttest(time_mean,0);
-end
-cfg.highlightchannel = label(p<=0.05);
-figure()
-ft_topoplotER(cfg, topodat); colormap viridis; 
-title('Task difference Late delay (1.2-1.7s)')
-savname = strcat(figpath, 'diff_searchlight_late.png');
-saveas(gcf, savname)
-savname = strcat(figpath, 'diff_searchlight_late.svg');
-saveas(gcf, savname)
-
 %% Within vs across task decoding (Fig S3B)
 
 mean_within = squeeze(mean(Cproj_within,4));
@@ -420,7 +349,7 @@ topodat.dimord = 'time_chan';
 %Within
 topodat.trial = submean_within;
 
-%Stimulus
+%Encoding
 for ichan = 1:length(label)
     toi = time_orig>=0 & time_orig<=0.2;
     time_mean = squeeze(mean(mean_within(:,toi,ichan),2));
@@ -476,7 +405,7 @@ saveas(gcf, savname)
 %Across task decoding
 topodat.trial = submean_across;
 
-%Stimulus
+%Encoding
 for ichan = 1:length(label)
     toi = time_orig>=0 & time_orig<=0.2;
     time_mean = squeeze(mean(mean_across(:,toi,ichan),2));
@@ -531,7 +460,7 @@ saveas(gcf, savname)
 %Within minus across task decoding
 topodat.trial = submean_diff;
 
-%Stimulus
+%Encoding
 for ichan = 1:length(label)
     toi = time_orig>=0 & time_orig<=0.2;
     time_mean = squeeze(mean(within_minus_across(:,toi,ichan),2));
